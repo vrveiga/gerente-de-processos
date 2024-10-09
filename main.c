@@ -34,12 +34,9 @@ int busca_binaria_prior(celula* proc, int sz, int p) {
 }
 
 bool eh_menor(horario a, horario b) {
-    if (a.hh < b.hh) return true;
-    if (a.hh > b.hh) return false;
-    if (a.mm < b.mm) return true;
-    if (a.mm > b.mm) return false;
-    if (a.ss < b.ss) return true;
-    if (a.ss > b.ss) return false;
+    if (a.hh != b.hh) return a.hh < b.hh;
+    if (a.mm != b.mm) return a.mm < b.mm;
+    if (a.ss != b.ss) return a.ss < b.ss;
 }
 
 int busca_binaria_tempo(celula* proc, int sz, horario t) {
@@ -75,7 +72,6 @@ void add(celula* p_prior, celula* p_tempo, int* sz) {
     strncpy(p_prior[id].descricao, desc, MAX_DESCR);
 
     id = busca_binaria_tempo(p_tempo, *sz, tempo);
-    printf("%d\n", id);
     for (int i = *sz; i > id; i--)
         p_tempo[i] = p_tempo[i-1];
 
@@ -84,6 +80,21 @@ void add(celula* p_prior, celula* p_tempo, int* sz) {
     strncpy(p_tempo[id].descricao, desc, MAX_DESCR);
 
     (*sz)++;
+}
+
+void next(celula* p_prior, celula* p_tempo, int sz) {
+    char op;
+    scanf(" %c%c", &op, &op);
+    if (sz == 0) return;
+    
+    if (op == 'p')
+        printf("%d %02d:%02d:%02d %s\n", p_prior[0].prior, p_prior[0].chegada.hh,
+                p_prior[0].chegada.mm, p_prior[0].chegada.ss, p_prior[0].descricao);
+    else if (op == 't')
+        printf("%d %02d:%02d:%02d %s\n", p_tempo[0].prior, p_tempo[0].chegada.hh,
+                p_tempo[0].chegada.mm, p_tempo[0].chegada.ss, p_tempo[0].descricao);
+                
+    printf("\n");
 }
 
 void print(celula* p_prior, celula* p_tempo, int sz) {
@@ -113,9 +124,11 @@ int main() {
     while (scanf(" %s", comando) && strcmp(comando, "quit")) {
         if (!strcmp(comando, "add"))
             add(p_prior, p_tempo, &sz);
+        else if (!strcmp(comando, "next"))
+            next(p_prior, p_tempo, sz);
         else if (!strcmp(comando, "print"))
             print(p_prior, p_tempo, sz);
-
+        
         
     }
 
