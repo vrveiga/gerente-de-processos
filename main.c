@@ -16,6 +16,13 @@ typedef struct {
     char descricao[MAX_DESCR];
 } celula;
 
+bool eh_menor(horario a, horario b) {
+    if (a.hh != b.hh) return a.hh < b.hh;
+    if (a.mm != b.mm) return a.mm < b.mm;
+    if (a.ss != b.ss) return a.ss < b.ss;
+    return false;
+}
+
 int busca_binaria_prior(celula* proc, int sz, int p) {
     int l = 0, r = sz-1;
     int ret = 0;
@@ -31,12 +38,6 @@ int busca_binaria_prior(celula* proc, int sz, int p) {
     }
 
     return l;
-}
-
-bool eh_menor(horario a, horario b) {
-    if (a.hh != b.hh) return a.hh < b.hh;
-    if (a.mm != b.mm) return a.mm < b.mm;
-    if (a.ss != b.ss) return a.ss < b.ss;
 }
 
 int busca_binaria_tempo(celula* proc, int sz, horario t) {
@@ -82,6 +83,39 @@ void add(celula* p_prior, celula* p_tempo, int* sz) {
     (*sz)++;
 }
 
+void exec(celula* p_prior, celula* p_tempo, int* sz) {
+    char op;
+    scanf(" %c%c", &op, &op);
+
+    int id_p, id_t;
+
+    if (op == 'p') {
+        id_p = 0;
+        for (int i = 0; i < *sz; i++) {
+            if (p_tempo[i].prior == p_prior[0].prior) {
+                id_t = i;
+                break;
+            }
+        }
+    } else if (op == 't') {
+        id_t = 0;
+        for (int i = 0; i < *sz; i++) {
+            if (p_prior[i].prior == p_tempo[0].prior) {
+                id_p = i;
+                break;
+            }
+        }
+    }
+
+    for (int i = id_p; i < *sz; i++)
+        p_prior[i] = p_prior[i+1];
+
+    for (int i = id_t; i < *sz; i++)
+        p_tempo[i] = p_tempo[i+1];
+
+    (*sz)--;
+}
+
 void next(celula* p_prior, celula* p_tempo, int sz) {
     char op;
     scanf(" %c%c", &op, &op);
@@ -93,13 +127,14 @@ void next(celula* p_prior, celula* p_tempo, int sz) {
     else if (op == 't')
         printf("%d %02d:%02d:%02d %s\n", p_tempo[0].prior, p_tempo[0].chegada.hh,
                 p_tempo[0].chegada.mm, p_tempo[0].chegada.ss, p_tempo[0].descricao);
-                
+
     printf("\n");
 }
 
 void print(celula* p_prior, celula* p_tempo, int sz) {
     char op;
     scanf(" %c%c", &op, &op);
+    if (sz == 0) return;
 
     if (op == 'p') {
         for (int i = 0; i < sz; i++) {
@@ -126,6 +161,8 @@ int main() {
             add(p_prior, p_tempo, &sz);
         else if (!strcmp(comando, "next"))
             next(p_prior, p_tempo, sz);
+        else if (!strcmp(comando, "exec"))
+            exec(p_prior, p_tempo, &sz);
         else if (!strcmp(comando, "print"))
             print(p_prior, p_tempo, sz);
         
