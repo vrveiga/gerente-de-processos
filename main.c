@@ -57,6 +57,12 @@ int busca_binaria_tempo(celula* proc, int sz, horario t) {
     return ret;
 }
 
+void swap(celula* a, celula* b) {
+    celula c = *a;
+    *a = *b;
+    *b = c;
+}
+
 void add(celula* p_prior, celula* p_tempo, int* sz) {
     int prior, hh, mm, ss;
     char desc[MAX_DESCR];
@@ -131,6 +137,65 @@ void next(celula* p_prior, celula* p_tempo, int sz) {
     printf("\n");
 }
 
+void change(celula* p_prior, celula* p_tempo, int sz) {
+    char op;
+    scanf(" %c%c", &op, &op);
+
+    if (op == 'p') {
+        int prior_from, prior_to;
+        scanf(" %d|%d", &prior_from, &prior_to);
+
+        int id;
+        for (int i = 0; i < sz; i++) {
+            if (p_tempo[i].prior == prior_from) {
+                p_tempo[i].prior = prior_to;
+            }
+            if (p_prior[i].prior == prior_from) {
+                id = i;
+                p_prior[i].prior = prior_to;
+            }
+        }
+
+        while (id > 0 && p_prior[id].prior > p_prior[id-1].prior) {
+            swap(p_prior + id, p_prior + (id-1));
+            id--;
+        }
+
+        while (id < sz-1 && p_prior[id].prior < p_prior[id+1].prior) {
+            swap(p_prior + id, p_prior + (id+1));
+            id++;
+        }
+    }
+    else if (op == 't') {
+        int h1, m1, s1, h2, m2, s2;
+        scanf(" %d:%d:%d|%d:%d:%d", &h1, &m1, &s1, &h2, &m2, &s2);
+
+        horario hora_from = {h1, m1, s1};
+        horario hora_to = {h2, m2, s2};
+
+        int id;
+        for (int i = 0; i < sz; i++) {
+            if (p_tempo[i].chegada.hh == h1 && p_tempo[i].chegada.mm == m1 && p_tempo[i].chegada.ss == s1) {
+                p_tempo[i].chegada = hora_to;
+                id = i;
+            }
+            if (p_prior[i].chegada.hh == h1 && p_prior[i].chegada.mm == m1 && p_prior[i].chegada.ss == s1) {
+                p_prior[i].chegada = hora_to;
+            }
+        }
+
+        while (id > 0 && eh_menor(p_tempo[id].chegada, p_tempo[id-1].chegada)) {
+            swap(p_tempo + id, p_tempo + (id-1));
+            id--;
+        }
+
+        while (id < sz-1 && eh_menor(p_tempo[id+1].chegada, p_tempo[id].chegada)) {
+            swap(p_tempo + id, p_tempo + (id+1));
+            id++;
+        }
+    }
+}
+
 void print(celula* p_prior, celula* p_tempo, int sz) {
     char op;
     scanf(" %c%c", &op, &op);
@@ -163,10 +228,10 @@ int main() {
             next(p_prior, p_tempo, sz);
         else if (!strcmp(comando, "exec"))
             exec(p_prior, p_tempo, &sz);
+        else if (!strcmp(comando, "change"))
+            change(p_prior, p_tempo, sz);
         else if (!strcmp(comando, "print"))
             print(p_prior, p_tempo, sz);
-        
-        
     }
 
     return 0;
