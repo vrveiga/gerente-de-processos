@@ -216,7 +216,7 @@ void print(celula* p_prior, celula* p_tempo, int sz) {
 }
 
 int main() {
-    char comando[50]; //aaaaa
+    char comando[10];
 
     celula p_prior[150], p_tempo[150];
     int sz = 0;
