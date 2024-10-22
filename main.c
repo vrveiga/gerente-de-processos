@@ -59,19 +59,19 @@ int busca_binaria_prior(celula* proc, int sz, int p) {
     //l = id para o inicio da busca no array
     //r = id para o fim da busca no array
     int l = 0, r = sz-1; 
-    int ret = 0; //?
+    int ret = 0; 
 
     while (l <= r) { 
         int m = (l + r)/2; //m = id para o meio do array
         if (proc[m].prior < p) { 
-            ret = m; //??
+            ret = m; 
             r = m - 1; //ajusta a busca binaria para a primeira metade do array válido
         } else {
             l = m + 1; //ajusta a busca binaria para a segunda metade do array válido
         }
     }
 
-    return l;
+    return l; //??
 }
 
 /*
@@ -230,61 +230,72 @@ void next(celula* p_prior, celula* p_tempo, int sz) {
 Modifica as informações de um processo com base na opção fornecida, em que:
     -p: altera o campo prior com valor anterior para o valor novo
     -t: altera o campo tempo com valor anterior para o valor novo
+Parâmetros:
+    *p_prior: lista que ordena os processos por prioridade 
+    *p_tempo: lista que ordena os processos por tempo 
+    sz: variável que armazena a quantidade de processos
 */
 void change(celula* p_prior, celula* p_tempo, int sz) {
     char op;
     scanf(" %c%c", &op, &op); //faz a leitura da opção de modificação
 
-    if (op == 'p') { //caso seja com base na prioridade
-        //prior_from: prioridade anterior
-        //prior_to : nova prioridade
-        int prior_from, prior_to;
+    if (op == 'p') { //caso a opção seja com base na prioridade
+        int prior_from, //prioridade do processo que será alterado (anterior)
+            prior_to; //nova prioridade do processo (novo)
         scanf(" %d|%d", &prior_from, &prior_to); //realiza leitura das informações
 
-        int id; 
+        int id; //id da posição do processo no vetor de tempo
         for (int i = 0; i < sz; i++) {
             if (p_tempo[i].prior == prior_from) { // --- daria pra usar busca binaria ---
-                p_tempo[i].prior = prior_to; //atualiza a prioridade do processo
+                p_tempo[i].prior = prior_to; //atualiza a prioridade do processo no vetor de prioridade
             }
             if (p_prior[i].prior == prior_from) {
-                id = i; 
-                p_prior[i].prior = prior_to; //atualiza o tempo do processo
+                id = i; //guarda o id do processo no vetor de prioridade
+                p_prior[i].prior = prior_to; //atualiza a prioridade do processo no vetor de tempo
             }
         }
 
+        /*caso a nova prioridade seja MAIOR do que o vizinho anterior 
+          desloca o processo para o local com a prioridade ordenada na lista de prioridade */
         while (id > 0 && p_prior[id].prior > p_prior[id-1].prior) {
-            swap(p_prior + id, p_prior + (id-1));
+            swap(p_prior + id, p_prior + (id-1)); 
             id--;
         }
 
+        /*caso a nova prioridade seja MENOR do que o vizinho anterior 
+          desloca o processo para o local com a prioridade ordenada na lista de prioridade*/
         while (id < sz-1 && p_prior[id].prior < p_prior[id+1].prior) {
-            swap(p_prior + id, p_prior + (id+1));
+            swap(p_prior + id, p_prior + (id+1)); //desloca o 
             id++;
         }
     }
-    else if (op == 't') {
+    else if (op == 't') { //caso a opção seja com base no tempo
         int h1, m1, s1, h2, m2, s2;
         scanf(" %d:%d:%d|%d:%d:%d", &h1, &m1, &s1, &h2, &m2, &s2);
 
-        horario hora_from = {h1, m1, s1};
-        horario hora_to = {h2, m2, s2};
+        horario hora_from = {h1, m1, s1}; //horario do processo que será alterado
+        horario hora_to = {h2, m2, s2}; //novo horário do processo
 
-        int id;
+        int id; //id da posição do processo no vetor de prioridade
         for (int i = 0; i < sz; i++) {
             if (p_tempo[i].chegada.hh == h1 && p_tempo[i].chegada.mm == m1 && p_tempo[i].chegada.ss == s1) {
-                p_tempo[i].chegada = hora_to;
-                id = i;
+                p_tempo[i].chegada = hora_to; //atualiza o tempo do processo no vetor de tempo
+                id = i; //guarda o id do processo no vetor de prioridade
             }
             if (p_prior[i].chegada.hh == h1 && p_prior[i].chegada.mm == m1 && p_prior[i].chegada.ss == s1) {
-                p_prior[i].chegada = hora_to;
+                p_prior[i].chegada = hora_to; //atualiza o tempo do processo no vetor de prioridade
             }
         }
 
+        /*caso o novo tempo seja MENOR do que o vizinho anterior 
+        desloca o processo para o local com o tempo ordenado no vetor de tempo*/
         while (id > 0 && eh_menor(p_tempo[id].chegada, p_tempo[id-1].chegada)) {
             swap(p_tempo + id, p_tempo + (id-1));
             id--;
         }
 
+        /*caso o novo tempo seja MAIOR do que o vizinho anterior 
+        desloca o processo para o local com o tempo ordenado no vetor de tempo*/
         while (id < sz-1 && eh_menor(p_tempo[id+1].chegada, p_tempo[id].chegada)) {
             swap(p_tempo + id, p_tempo + (id+1));
             id++;
@@ -292,18 +303,27 @@ void change(celula* p_prior, celula* p_tempo, int sz) {
     }
 }
 
+/*
+Imprime todos os processos a serem executados com base na opção fornecida, em que:
+    -p: imprime os processos em ordem decrescente de prioridade
+    -t: imprime os processos em ordem crescente de horários
+Parâmetros:
+    *p_prior: lista que ordena os processos por prioridade 
+    *p_tempo: lista que ordena os processos por tempo 
+    sz: variável que armazena a quantidade de processos
+*/
 void print(celula* p_prior, celula* p_tempo, int sz) {
     char op;
-    scanf(" %c%c", &op, &op);
-    if (sz == 0) return;
+    scanf(" %c%c", &op, &op); //lê a operação fornecida
+    if (sz == 0) return; //garante que existam elementos nos vetores
 
-    if (op == 'p') {
-        for (int i = 0; i < sz; i++) {
+    if (op == 'p') { //caso a impressão seja com base na prioridade
+        for (int i = 0; i < sz; i++) { //imprime todas as informações de cada processo em cada linha
             printf("%d %02d:%02d:%02d %s\n", p_prior[i].prior, p_prior[i].chegada.hh,
                     p_prior[i].chegada.mm, p_prior[i].chegada.ss, p_prior[i].descricao);
         }
-    } else if (op == 't') {
-        for (int i = 0; i < sz; i++) {
+    } else if (op == 't') { //caso a impressão seja com base no tempo
+        for (int i = 0; i < sz; i++) { //imprime todas as informações de cada processo em cada linha
             printf("%d %02d:%02d:%02d %s\n", p_tempo[i].prior, p_tempo[i].chegada.hh,
                     p_tempo[i].chegada.mm, p_tempo[i].chegada.ss, p_tempo[i].descricao);
         }
