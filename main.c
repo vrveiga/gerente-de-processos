@@ -59,19 +59,17 @@ int busca_binaria_prior(celula* proc, int sz, int p) {
     //l = id para o inicio da busca no array
     //r = id para o fim da busca no array
     int l = 0, r = sz-1; 
-    int ret = 0; 
 
     while (l <= r) { 
         int m = (l + r)/2; //m = id para o meio do array
         if (proc[m].prior < p) { 
-            ret = m; 
             r = m - 1; //ajusta a busca binaria para a primeira metade do array válido
         } else {
             l = m + 1; //ajusta a busca binaria para a segunda metade do array válido
         }
     }
 
-    return l; //??
+    return l; //retorna o primeiro valor válido
 }
 
 /*
@@ -95,7 +93,7 @@ int busca_binaria_tempo(celula* proc, int sz, horario t) {
     while (l <= r) {
         int m = (l + r)/2; //m = id para o meio do array
         if (eh_menor(t, proc[m].chegada)) { //verifica se o horário t é menor que
-            ret = m;                             //o horario do elemento de posição m na lista 
+            ret = m;                          //o horario do elemento de posição m na lista 
             r = m - 1;
         } else {
             l = m + 1;
@@ -164,7 +162,7 @@ Parâmetros:
 */
 void exec(celula* p_prior, celula* p_tempo, int* sz) {
     char op; //faz a leitura da opção de execução
-    scanf(" %c%c", &op, &op); //%*c - discarta o traço
+    scanf(" %*c%c", &op);
 
     int id_p, id_t;
 
@@ -214,12 +212,12 @@ void next(celula* p_prior, celula* p_tempo, int sz) {
     
     if (op == 'p') //caso a opção seja com base na prioridade
         //printa as informações com base nas especificações do projeto
-        printf("%d %02d:%02d:%02d %s\n", p_prior[0].prior, p_prior[0].chegada.hh,
+        printf("%02d %02d:%02d:%02d %s\n", p_prior[0].prior, p_prior[0].chegada.hh,
                 p_prior[0].chegada.mm, p_prior[0].chegada.ss, p_prior[0].descricao);
 
-    else if (op == 't')//caso a opção seja com base no tempo
+    else if (op == 't') //caso a opção seja com base no tempo
         //printa as informações com base nas especificações do projeto
-        printf("%d %02d:%02d:%02d %s\n", p_tempo[0].prior, p_tempo[0].chegada.hh,
+        printf("%02d %02d:%02d:%02d %s\n", p_tempo[0].prior, p_tempo[0].chegada.hh,
                 p_tempo[0].chegada.mm, p_tempo[0].chegada.ss, p_tempo[0].descricao);
 
     printf("\n");
@@ -240,13 +238,13 @@ void change(celula* p_prior, celula* p_tempo, int sz) {
     scanf(" %c%c", &op, &op); //faz a leitura da opção de modificação
 
     if (op == 'p') { //caso a opção seja com base na prioridade
-        int prior_from, //prioridade do processo que será alterado (anterior)
-            prior_to; //nova prioridade do processo (novo)
+        int prior_from; //prioridade do processo que será alterado (anterior)
+        int prior_to; //nova prioridade do processo (novo)
         scanf(" %d|%d", &prior_from, &prior_to); //realiza leitura das informações
 
         int id; //id da posição do processo no vetor de tempo
         for (int i = 0; i < sz; i++) {
-            if (p_tempo[i].prior == prior_from) { // --- daria pra usar busca binaria ---
+            if (p_tempo[i].prior == prior_from) {
                 p_tempo[i].prior = prior_to; //atualiza a prioridade do processo no vetor de prioridade
             }
             if (p_prior[i].prior == prior_from) {
@@ -319,12 +317,12 @@ void print(celula* p_prior, celula* p_tempo, int sz) {
 
     if (op == 'p') { //caso a impressão seja com base na prioridade
         for (int i = 0; i < sz; i++) { //imprime todas as informações de cada processo em cada linha
-            printf("%d %02d:%02d:%02d %s\n", p_prior[i].prior, p_prior[i].chegada.hh,
+            printf("%02d %02d:%02d:%02d %s\n", p_prior[i].prior, p_prior[i].chegada.hh,
                     p_prior[i].chegada.mm, p_prior[i].chegada.ss, p_prior[i].descricao);
         }
     } else if (op == 't') { //caso a impressão seja com base no tempo
         for (int i = 0; i < sz; i++) { //imprime todas as informações de cada processo em cada linha
-            printf("%d %02d:%02d:%02d %s\n", p_tempo[i].prior, p_tempo[i].chegada.hh,
+            printf("%02d %02d:%02d:%02d %s\n", p_tempo[i].prior, p_tempo[i].chegada.hh,
                     p_tempo[i].chegada.mm, p_tempo[i].chegada.ss, p_tempo[i].descricao);
         }
     }
