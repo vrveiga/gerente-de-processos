@@ -185,11 +185,11 @@ void exec(celula* p_prior, celula* p_tempo, int* sz) {
     }
 
     //realiza deslocamento dos elementos na lista de prioridade
-    for (int i = id_p; i < *sz; i++)
+    for (int i = id_p; i < (*sz) - 1; i++)
         p_prior[i] = p_prior[i+1];
 
     //realiza deslocamento dos elementos na lista de tempo
-    for (int i = id_t; i < *sz; i++)
+    for (int i = id_t; i < (*sz) - 1; i++)
         p_tempo[i] = p_tempo[i+1];
 
     (*sz)--; //decrementa o número de processos
