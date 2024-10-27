@@ -207,7 +207,7 @@ Parâmetros:
 */
 void next(celula* p_prior, celula* p_tempo, int sz) {
     char op;
-    scanf(" %c%c", &op, &op); //faz a leitura da opção de mostrar o processo
+    scanf(" %*c%c", &op); //faz a leitura da opção de mostrar o processo
     if (sz == 0) return; //garante que existam processos para serem mostrados
     
     if (op == 'p') //caso a opção seja com base na prioridade
@@ -235,7 +235,7 @@ Parâmetros:
 */
 void change(celula* p_prior, celula* p_tempo, int sz) {
     char op;
-    scanf(" %c%c", &op, &op); //faz a leitura da opção de modificação
+    scanf(" %*c%c", &op); //faz a leitura da opção de modificação
 
     if (op == 'p') { //caso a opção seja com base na prioridade
         int prior_from; //prioridade do processo que será alterado (anterior)
@@ -312,7 +312,7 @@ Parâmetros:
 */
 void print(celula* p_prior, celula* p_tempo, int sz) {
     char op;
-    scanf(" %c%c", &op, &op); //lê a operação fornecida
+    scanf(" %*c%c", &op); //lê a operação fornecida
     if (sz == 0) return; //garante que existam elementos nos vetores
 
     if (op == 'p') { //caso a impressão seja com base na prioridade
